@@ -273,5 +273,125 @@
             })
             .catch(error => console.log('版本检查失败:', error));
     </script>
+<!--这里-->
+<canvas id="smokeCanvas"></canvas>
+
+<style>
+#smokeCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998; /* 降低z-index，确保在内容下方 */
+}
+</style>
+
+<script>
+// 修复的烟雾效果 - 界面可见
+(function() {
+    const canvas = document.getElementById('smokeCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // 设置canvas尺寸
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    // 烟雾粒子数组
+    let particles = [];
+    
+    // 粒子类
+    class Particle {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.size = Math.random() * 12 + 3; // 减小粒子大小
+            this.speedX = Math.random() * 2 - 1;
+            this.speedY = Math.random() * 2 - 1;
+            // 更浅的粉色，透明度更低
+            this.color = `rgba(255, 192, 203, ${Math.random() * 0.3 + 0.1})`;
+            this.life = 1;
+            this.decay = Math.random() * 0.02 + 0.005;
+        }
+        
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.life -= this.decay;
+            this.size *= 0.99;
+        }
+        
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.life * 0.5; // 降低整体透明度
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+    
+    // 创建粒子
+    function createParticles(x, y, count = 5) { // 减少粒子数量
+        for (let i = 0; i < count; i++) {
+            particles.push(new Particle(x, y));
+        }
+    }
+    
+    // 动画循环 - 修复：不使用黑色背景覆盖
+    function animate() {
+        // 关键修复：清除画布时使用完全透明
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 更新和绘制所有粒子
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+            
+            // 移除死亡的粒子
+            if (particles[i].life <= 0 || particles[i].size <= 0.5) {
+                particles.splice(i, 1);
+                i--;
+            }
+        }
+        
+        requestAnimationFrame(animate);
+    }
+    
+    // 鼠标移动跟踪
+    let mouseX = 0;
+    let mouseY = 0;
+    let lastTime = 0;
+    
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        
+        // 限制创建频率
+        const currentTime = Date.now();
+        if (currentTime - lastTime > 50) {
+            createParticles(mouseX, mouseY, 3);
+            lastTime = currentTime;
+        }
+    });
+    
+    // 鼠标点击时创建更多粒子
+    document.addEventListener('click', (e) => {
+        for (let i = 0; i < 8; i++) {
+            createParticles(e.clientX, e.clientY, 1);
+        }
+    });
+    
+    // 开始动画
+    animate();
+})();
+</script>
+<!--hhhhhh-->
 </body>
 </html>
