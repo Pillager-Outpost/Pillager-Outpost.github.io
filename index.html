@@ -140,7 +140,7 @@
             <p>体验2026的美妙旅程</p>
             <a href="https://github.com/你的用户名/游戏名/releases/latest/download/游戏名.zip" 
                class="btn-download" id="downloadBtn">
-                🎮 下载 Windows 版本 (v1.2.3)
+                🎮 下载 Windows 版本 (v1.0)
             </a>
             <p class="file-size">文件大小：约 10MB</p>
             <p class="system-requirements">支持 Windows 7/10/11</p>
@@ -235,8 +235,8 @@
         <footer>
             <h3>联系我们</h3>
             <p style="margin: 15px 0;">
-                邮箱：尽请期待<br>
-                QQ群：尽请期待<br>
+                邮箱：zhizhong0919@petalmail.com<br>
+                GitHub：Pillager_Outpost<br>
                 反馈问题：<a href="https://github.com/你的用户名/游戏名/issues" 
                        style="color: #4CAF50; text-decoration: none;">GitHub Issues</a>
             </p>
@@ -245,35 +245,7 @@
             </p>
         </footer>
     </div>
-    
-    <script>
-        // 简单的下载计数
-        document.getElementById('downloadBtn').addEventListener('click', function() {
-            // 可以在这里添加统计代码
-            console.log('用户点击了下载');
-            
-            // 模拟发送统计请求（实际使用时需要后端）
-            // fetch('统计API地址', { method: 'POST' });
-        });
-        
-        // 自动检查版本（可选）
-        fetch('version.txt')
-            .then(response => response.text())
-            .then(version => {
-                const badge = document.querySelector('.version-badge');
-                if (badge && version.trim()) {
-                    badge.textContent = `最新版本：v${version.trim()}`;
-                    
-                    // 更新下载链接文本
-                    const downloadBtn = document.getElementById('downloadBtn');
-                    if (downloadBtn) {
-                        downloadBtn.textContent = `🎮 下载 Windows 版本 (v${version.trim()})`;
-                    }
-                }
-            })
-            .catch(error => console.log('版本检查失败:', error));
-    </script>
-<!--这里-->
+  <!--烟雾开始-->
 <canvas id="smokeCanvas"></canvas>
 
 <style>
@@ -392,6 +364,6 @@
     animate();
 })();
 </script>
-<!--hhhhhh-->
+<!--烟雾结束-->
 </body>
 </html>
