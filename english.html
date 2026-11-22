@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>单词斩 · 课堂 demo</title>
+<style>
+/* ==========================================================
+   01 基础与主题（与 index.html 保持一致）
+   ========================================================== */
+:root {
+    --bg1: #E0F2FE;
+    --bg2: #F0FDF4;
+    --card: rgba(255, 255, 255, 0.85);
+    --text: #1E293B;
+    --text-muted: #64748B;
+    --border: rgba(203, 213, 225, 0.6);
+    --accent: #0EA5E9;
+    --highlight-bg: #BAE6FD;
+    --highlight-text: #0369A1;
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 12px 32px rgba(14, 165, 233, 0.15);
+    --notice-bg: rgba(254, 249, 195, 0.7);
+    --notice-border: #EAB308;
+    --btn-bg: #0EA5E9;
+    --btn-text: #fff;
+    --topbar-bg: rgba(255, 255, 255, 0.85);
+}
+html[data-theme="dark"] {
+    --bg1: #0B1120;
+    --bg2: #111827;
+    --card: rgba(30, 41, 59, 0.85);
+    --text: #E2E8F0;
+    --text-muted: #94A3B8;
+    --border: rgba(51, 65, 85, 0.8);
+    --accent: #38BDF8;
+    --highlight-bg: #0C4A6E;
+    --highlight-text: #7DD3FC;
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 12px 32px rgba(56, 189, 248, 0.2);
+    --notice-bg: rgba(42, 36, 16, 0.7);
+    --notice-border: #EAB308;
+    --btn-bg: #38BDF8;
+    --btn-text: #0B1120;
+    --topbar-bg: rgba(18, 22, 30, 0.85);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+html { scroll-behavior: smooth; }
+
+body {
+    background: linear-gradient(160deg, var(--bg1), var(--bg2));
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: "华文中宋", "STZhongsong", "SimSun", serif;
+    line-height: 1.8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.4s, color 0.3s;
+}
+
+#app {
+    width: 100%; max-width: 430px;
+    height: 100vh; height: 100dvh;
+    position: relative; z-index: 1; overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.12);
+}
+
+/* 背景浮动气泡（位于应用下层，鼠标穿透） */
+.bubbles {
+    position: fixed; inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+.bubble {
+    position: absolute;
+    bottom: -110px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.85), rgba(255,255,255,.16) 72%);
+    border: 1px solid rgba(255,255,255,.55);
+    box-shadow: inset 0 0 14px rgba(255,255,255,.5), 0 6px 18px rgba(14,165,233,.08);
+    opacity: 0;
+    animation: bubbleRise linear infinite;
+}
+html[data-theme="dark"] .bubble {
+    background: radial-gradient(circle at 32% 28%, rgba(125,211,252,.22), rgba(125,211,252,.03) 72%);
+    border-color: rgba(125,211,252,.2);
+    box-shadow: inset 0 0 14px rgba(125,211,252,.14);
+}
+@keyframes bubbleRise {
+    0%   { transform: translate3d(0, 0, 0) scale(.8); opacity: 0; }
+    12%  { opacity: .7; }
+    50%  { transform: translate3d(22px, -55vh, 0) scale(1); }
+    88%  { opacity: .5; }
+    100% { transform: translate3d(-14px, -115vh, 0) scale(1.12); opacity: 0; }
+}
+@keyframes bubbleRiseAlt {
+    0%   { transform: translate3d(0, 0, 0) scale(.9); opacity: 0; }
+    12%  { opacity: .6; }
+    50%  { transform: translate3d(-24px, -55vh, 0) scale(1); }
+    88%  { opacity: .45; }
+    100% { transform: translate3d(18px, -115vh, 0) scale(1.08); opacity: 0; }
+}
+.bubble:nth-child(1)  { left: 4%;  width: 22px; height: 22px; animation-duration: 19s; animation-delay: -2s; }
+.bubble:nth-child(2)  { left: 15%; width: 40px; height: 40px; animation-duration: 27s; animation-delay: -9s;  animation-name: bubbleRiseAlt; }
+.bubble:nth-child(3)  { left: 27%; width: 16px; height: 16px; animation-duration: 15s; animation-delay: -5s; }
+.bubble:nth-child(4)  { left: 38%; width: 54px; height: 54px; animation-duration: 32s; animation-delay: -18s; animation-name: bubbleRiseAlt; }
+.bubble:nth-child(5)  { left: 49%; width: 26px; height: 26px; animation-duration: 21s; animation-delay: -12s; }
+.bubble:nth-child(6)  { left: 58%; width: 34px; height: 34px; animation-duration: 25s; animation-delay: -3s;  animation-name: bubbleRiseAlt; }
+.bubble:nth-child(7)  { left: 68%; width: 18px; height: 18px; animation-duration: 17s; animation-delay: -14s; }
+.bubble:nth-child(8)  { left: 77%; width: 46px; height: 46px; animation-duration: 29s; animation-delay: -7s;  animation-name: bubbleRiseAlt; }
+.bubble:nth-child(9)  { left: 86%; width: 24px; height: 24px; animation-duration: 20s; animation-delay: -16s; }
+.bubble:nth-child(10) { left: 93%; width: 36px; height: 36px; animation-duration: 24s; animation-delay: -11s; animation-name: bubbleRiseAlt; }
+.bubble:nth-child(11) { left: 9%;  width: 30px; height: 30px; animation-duration: 23s; animation-delay: -20s; animation-name: bubbleRiseAlt; }
+.bubble:nth-child(12) { left: 72%; width: 14px; height: 14px; animation-duration: 14s; animation-delay: -8s; }
+.hidden { display: none !important; }
+.page { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+/* ==========================================================
+   02 登录页
+   ========================================================== */
+#loginPage {
+    justify-content: center;
+    padding: 32px 28px calc(32px + env(safe-area-inset-bottom));
+}
+.logo {
+    width: 64px; height: 64px; border-radius: 20px;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    font-size: 30px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 26px rgba(14, 165, 233, 0.32);
+    margin-bottom: 22px;
+}
+#loginPage h1 { font-size: 29px; margin: 0 0 8px; letter-spacing: -0.5px; }
+.slogan { color: var(--text-muted); font-size: 14px; margin: 0 0 34px; }
+.field { margin-bottom: 14px; }
+.field input {
+    width: 100%; height: 52px; padding: 0 18px;
+    font-size: 16px; color: var(--text); font-family: inherit;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    outline: none; transition: 0.18s;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+.field input::placeholder { color: var(--text-muted); opacity: 0.75; }
+.field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12); }
+.btn-main {
+    width: 100%; height: 52px; border: none; border-radius: 15px;
+    background: var(--btn-bg); color: var(--btn-text);
+    font-size: 17px; font-weight: 600; font-family: inherit;
+    cursor: pointer; margin-top: 12px;
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.25);
+    transition: transform 0.12s, background 0.18s, box-shadow 0.18s;
+}
+.btn-main:active { transform: scale(0.985); }
+.btn-main:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(14, 165, 233, 0.35); }
+.tip { margin-top: 22px; font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.8; }
+
+/* ==========================================================
+   03 背单词 tab
+   ========================================================== */
+#tab-word { padding: 14px 18px 10px; overflow: hidden; }
+.topbar {
+    display: flex; align-items: center; gap: 12px;
+    height: 28px; margin-bottom: 16px; flex-shrink: 0;
+}
+.prog { flex: 1; height: 6px; border-radius: 99px; background: var(--border); overflow: hidden; }
+.prog > i {
+    display: block; height: 100%; width: 0; border-radius: 99px;
+    background: var(--accent);
+    transition: width 0.35s ease;
+}
+.prognum { font-size: 13px; color: var(--text-muted); font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
+.prognum b { color: var(--accent); font-size: 15px; }
+
+/* 卡片：3D 翻转 */
+.scene {
+    perspective: 1200px;
+    height: min(46vh, 340px);
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+.card {
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.45, 0.05, 0.2, 1);
+    cursor: pointer;
+}
+.card.flipped { transform: rotateY(180deg); }
+.face {
+    position: absolute; inset: 0;
+    border-radius: 18px;
+    background: var(--card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    overflow: hidden;
+    transition: box-shadow 0.3s, background 0.3s, border-color 0.3s;
+}
+.face.back {
+    transform: rotateY(180deg);
+    justify-content: center;
+    padding: 28px 26px;
+}
+.emj {
+    font-size: 66px; line-height: 1; margin-bottom: 14px;
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.08));
+}
+.word {
+    font-size: 40px; font-weight: 800; letter-spacing: -1.2px;
+    line-height: 1.2; word-break: break-word; text-align: center;
+    color: var(--text);
+}
+.phonerow { display: flex; align-items: center; gap: 9px; margin-top: 10px; }
+.phonetic { font-size: 15px; color: var(--text-muted); letter-spacing: 0.3px; }
+.speak {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--highlight-bg); color: var(--highlight-text);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0; transition: 0.16s;
+}
+.speak:hover { background: var(--accent); color: var(--btn-text); border-color: var(--accent); }
+.pos {
+    font-size: 12px; font-weight: 600; color: var(--highlight-text);
+    background: var(--highlight-bg);
+    padding: 4px 12px; border-radius: 99px;
+    margin-bottom: 14px;
+}
+.meaning {
+    font-size: 27px; font-weight: 750; line-height: 1.4;
+    text-align: center; letter-spacing: -0.4px;
+    color: var(--text);
+}
+.sent { margin-top: 20px; font-size: 14.5px; color: var(--text-muted); line-height: 1.7; text-align: center; }
+.sent-cn { margin-top: 6px; font-size: 13px; color: var(--text-muted); line-height: 1.7; text-align: center; }
+
+/* 四个选项 */
+.options { display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+.opt {
+    width: 100%; height: 50px; padding: 0 16px;
+    display: flex; align-items: center; gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px; cursor: pointer;
+    font-family: inherit; font-size: 15px; color: var(--text);
+    text-align: left; transition: 0.16s;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+.opt:hover { border-color: var(--accent); box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+.opt .idx {
+    width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0;
+    background: var(--border); color: var(--text-muted);
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.16s;
+}
+.opt.right { background: rgba(16, 185, 129, 0.15); border-color: #10B981; color: #10B981; }
+.opt.right .idx { background: #10B981; color: #fff; }
+.opt.wrong { background: rgba(239, 68, 68, 0.15); border-color: #EF4444; color: #EF4444; }
+.opt.wrong .idx { background: #EF4444; color: #fff; }
+
+/* ==========================================================
+   04 复习 tab
+   ========================================================== */
+#tab-review { padding: 20px 18px 0; overflow-y: auto; }
+.panel-head { margin-bottom: 18px; }
+.panel-head h2 { font-size: 22px; margin: 0 0 6px; letter-spacing: -0.4px; color: var(--text); }
+.panel-head p { font-size: 13px; color: var(--text-muted); margin: 0; }
+.review-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 14px 18px; margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+.review-item:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.ri-top { display: flex; align-items: baseline; gap: 9px; }
+.ri-top b { font-size: 17px; letter-spacing: -0.2px; color: var(--text); }
+.ri-top span { font-size: 12.5px; color: var(--text-muted); }
+.ri-bot { font-size: 13.5px; color: var(--text-muted); margin-top: 5px; }
+.empty { text-align: center; padding: 70px 20px; color: var(--text-muted); font-size: 14px; }
+.empty .big { font-size: 44px; display: block; margin-bottom: 14px; opacity: 0.5; }
+.bottom-act { padding: 18px 0 calc(18px + env(safe-area-inset-bottom)); }
+.btn-ghost {
+    width: 100%; height: 48px; border-radius: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--text); font-size: 15px; font-family: inherit; cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+}
+.btn-ghost:hover { background: var(--btn-bg); color: var(--btn-text); border-color: var(--btn-bg); transform: translateY(-2px); }
+
+/* ==========================================================
+   05 发现 tab
+   ========================================================== */
+#tab-discover { padding: 20px 18px; overflow-y: auto; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
+.gcard {
+    background: var(--card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 26px 14px 20px; cursor: pointer; font-family: inherit;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    box-shadow: var(--shadow);
+    transition: transform 0.18s, box-shadow 0.18s, background 0.3s, border-color 0.3s;
+}
+.gcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+.gcard .ic { font-size: 32px; line-height: 1; }
+.gcard span { font-size: 14px; color: var(--text); font-weight: 500; }
+
+/* ==========================================================
+   06 我的 tab
+   ========================================================== */
+#tab-me { padding: 24px 18px; overflow-y: auto; }
+.profile { display: flex; align-items: center; gap: 15px; margin-bottom: 26px; }
+.avatar {
+    width: 62px; height: 62px; border-radius: 50%;
+    background: var(--highlight-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; flex-shrink: 0;
+}
+.pname { font-size: 19px; font-weight: 700; letter-spacing: -0.2px; color: var(--text); }
+.pphone { font-size: 13px; color: var(--text-muted); margin-top: 5px; }
+.stats { display: flex; gap: 10px; margin-bottom: 14px; }
+.stat {
+    flex: 1; background: var(--card);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 18px 10px; text-align: center;
+    box-shadow: var(--shadow);
+}
+.stat b { display: block; font-size: 23px; font-weight: 750; color: var(--accent); line-height: 1.1; }
+.stat span { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 7px; }
+.metip { font-size: 12px; color: var(--text-muted); text-align: center; margin: 20px 0 26px; line-height: 1.8; }
+#themeToggle { margin-bottom: 14px; }
+
+/* ==========================================================
+   07 底部导航
+   ========================================================== */
+.tabbar {
+    height: calc(62px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--topbar-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    display: flex; flex-shrink: 0;
+    transition: background 0.3s, border-color 0.3s;
+}
+.tabbtn {
+    flex: 1; border: none; background: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; font-size: 11px; color: var(--text-muted);
+    font-family: inherit; transition: color 0.16s;
+}
+.tabbtn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tabbtn.active { color: var(--accent); }
+
+/* ==========================================================
+   08 轻提示
+   ========================================================== */
+.toast {
+    position: fixed; left: 50%; bottom: 96px; transform: translate(-50%, 14px);
+    background: rgba(30, 41, 59, 0.9); color: #fff;
+    padding: 11px 20px; border-radius: 12px;
+    font-size: 13.5px; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: 0.26s;
+    z-index: 99; backdrop-filter: blur(6px);
+}
+html[data-theme="dark"] .toast { background: rgba(226, 232, 240, 0.95); color: #0B1120; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ==========================================================
+   09 界面切换动画
+   ========================================================== */
+@keyframes pageIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.page-in { animation: pageIn 0.34s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+
+@keyframes wordIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.scene.word-in .face.front > * { animation: wordIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.scene.word-in .face.front > *:nth-child(2) { animation-delay: 0.06s; }
+.scene.word-in .face.front > *:nth-child(3) { animation-delay: 0.12s; }
+.scene.word-in .face.back > * { animation: wordIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.scene.word-in .face.back > *:nth-child(2) { animation-delay: 0.06s; }
+.scene.word-in .face.back > *:nth-child(3) { animation-delay: 0.12s; }
+.scene.word-in .face.back > *:nth-child(4) { animation-delay: 0.18s; }
+
+@keyframes optIn {
+    from { opacity: 0; transform: translateX(-14px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+.opt { animation: optIn 0.34s ease backwards; }
+.opt:nth-child(1) { animation-delay: 0.04s; }
+.opt:nth-child(2) { animation-delay: 0.10s; }
+.opt:nth-child(3) { animation-delay: 0.16s; }
+.opt:nth-child(4) { animation-delay: 0.22s; }
+.review-item { animation: optIn 0.36s ease backwards; }
+.review-item:nth-child(1) { animation-delay: 0.03s; }
+.review-item:nth-child(2) { animation-delay: 0.08s; }
+.review-item:nth-child(3) { animation-delay: 0.13s; }
+.review-item:nth-child(4) { animation-delay: 0.18s; }
+.review-item:nth-child(n+5) { animation-delay: 0.23s; }
+
+.tabbtn svg { transition: transform 0.2s; }
+.tabbtn.active svg { transform: translateY(-2px); }
+
+/* 今日完成面板 */
+.done-panel {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 20px 10px calc(20px + env(safe-area-inset-bottom));
+}
+@keyframes doneBob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-9px); }
+}
+.done-emoji {
+    font-size: 62px; line-height: 1; margin-bottom: 16px;
+    animation: doneBob 2.4s ease-in-out infinite;
+    filter: drop-shadow(0 8px 16px rgba(14,165,233,.2));
+}
+.done-title { font-size: 24px; margin-bottom: 8px; color: var(--text); }
+.done-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+.done-stats { display: flex; gap: 10px; width: 100%; margin-bottom: 28px; }
+.done-stats .stat { flex: 1; }
+.done-panel .btn-main { max-width: 260px; }
+
+/* ==========================================================
+   10 电脑端适配（宽屏：左侧导航 + 内容区）
+   ========================================================== */
+@media (min-width: 860px) {
+    #app {
+        max-width: 1040px;
+        height: min(100dvh - 64px, 880px);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.14);
+    }
+    .toast { bottom: 40px; }
+
+    /* 登录页居中卡片 */
+    #loginPage { align-items: center; padding: 48px; }
+    #loginPage h1, #loginPage .slogan, #loginPage .field,
+    #loginPage .btn-main, #loginPage .tip { width: min(100%, 400px); }
+    .logo { width: 76px; height: 76px; font-size: 36px; border-radius: 22px; }
+    #loginPage h1 { font-size: 34px; }
+
+    /* 主界面：左侧导航 + 右侧内容 */
+    #mainPage { flex-direction: row; }
+    .tabbar {
+        order: -1;
+        width: 176px;
+        height: auto;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 28px 14px;
+        border-top: none;
+        border-right: 1px solid var(--border);
+        background: var(--card);
+    }
+    .tabbar::before {
+        content: "单词斩";
+        display: block;
+        padding: 2px 16px 22px;
+        font-size: 18px; font-weight: 700;
+        color: var(--accent); letter-spacing: 0.08em;
+    }
+    .tabbtn {
+        flex: none;
+        height: 52px;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 14px;
+        padding: 0 18px;
+        border-radius: 12px;
+        font-size: 14px;
+    }
+    .tabbtn svg { width: 21px; height: 21px; }
+    .tabbtn.active { background: var(--highlight-bg); color: var(--highlight-text); }
+    .tabbtn.active svg { transform: none; }
+
+    #tab-word, #tab-review, #tab-discover, #tab-me { padding: 36px 44px; }
+
+    .topbar { height: 32px; margin-bottom: 24px; }
+    .scene { height: min(48vh, 420px); margin-bottom: 24px; }
+    .emj { font-size: 92px; }
+    .word { font-size: 56px; }
+    .phonetic { font-size: 17px; }
+    .meaning { font-size: 34px; }
+    .sent { font-size: 16px; }
+    .sent-cn { font-size: 14px; }
+
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .opt { height: 58px; font-size: 16px; padding: 0 20px; }
+
+    .panel-head h2 { font-size: 26px; }
+    .panel-head p { font-size: 14px; }
+    .review-item { padding: 18px 22px; margin-bottom: 12px; }
+    .ri-top b { font-size: 19px; }
+    .ri-bot { font-size: 15px; }
+
+    .grid { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .gcard { padding: 42px 18px 34px; }
+    .gcard .ic { font-size: 40px; }
+    .gcard span { font-size: 15px; }
+
+    .profile { margin-bottom: 32px; }
+    .avatar { width: 76px; height: 76px; font-size: 36px; }
+    .pname { font-size: 23px; }
+    .stats { gap: 18px; }
+    .stat { padding: 26px 14px; }
+    .stat b { font-size: 30px; }
+    .stat span { font-size: 13px; }
+    .btn-ghost { height: 52px; max-width: 320px; font-size: 16px; }
+    #themeToggle { margin-bottom: 18px; }
+    .metip { margin: 24px 0 26px; }
+}
+
+@media (max-width: 859px) and (min-width: 521px) {
+    /* 平板：适度放宽 */
+    #app { max-width: 620px; height: min(100dvh - 40px, 900px); border-radius: 22px; border: 1px solid var(--border); }
+    .scene { height: min(44vh, 380px); }
+    .word { font-size: 46px; }
+    .grid { gap: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- ---------- 背景浮动气泡 ---------- -->
+<div class="bubbles" aria-hidden="true">
+  <span class="bubble"></span><span class="bubble"></span>
+  <span class="bubble"></span><span class="bubble"></span>
+  <span class="bubble"></span><span class="bubble"></span>
+  <span class="bubble"></span><span class="bubble"></span>
+  <span class="bubble"></span><span class="bubble"></span>
+  <span class="bubble"></span><span class="bubble"></span>
+</div>
+
+<!-- ==========================================================
+     界面
+     ========================================================== -->
+<div id="app">
+
+  <!-- ---------- 登录页 ---------- -->
+  <section id="loginPage" class="page">
+    <div class="logo">斩</div>
+    <h1>单词斩</h1>
+    <p class="slogan">一天 20 个</p>
+
+    <div class="field">
+      <input id="phone" type="tel" inputmode="numeric" maxlength="11" placeholder="请输入手机号" autocomplete="off">
+    </div>
+    <div class="field">
+      <input id="pwd" type="password" placeholder="请输入密码" autocomplete="off">
+    </div>
+
+    <button id="loginBtn" class="btn-main">登录</button>
+    <p class="tip">本地demo · 离线html测试</p>
+  </section>
+
+  <!-- ---------- 主界面 ---------- -->
+  <section id="mainPage" class="page hidden">
+
+    <!-- tab 1：背单词 -->
+    <div id="tab-word" class="page">
+      <div class="topbar">
+        <div class="prog"><i id="progBar"></i></div>
+        <span class="prognum"><b id="nowNum">1</b> / <span id="totalNum">20</span></span>
+      </div>
+
+      <div class="scene">
+        <div class="card" id="card">
+          <!-- 正面 -->
+          <div class="face front">
+            <div class="emj" id="wEmoji">🏚️</div>
+            <div class="word" id="wWord">abandon</div>
+            <div class="phonerow">
+              <span class="phonetic" id="wPhonetic">/əˈbændən/</span>
+              <button class="speak" id="speakBtn" aria-label="朗读">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 5 6 9H2v6h4l5 4V5z"></path>
+                  <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+                  <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <!-- 背面 -->
+          <div class="face back">
+            <div class="pos" id="wPos">v.</div>
+            <div class="meaning" id="wMeaning">放弃</div>
+            <div class="sent" id="wSent">They had to abandon the car.</div>
+            <div class="sent-cn" id="wSentCn">他们不得不弃车。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="options" id="options"></div>
+
+      <!-- 今日完成 -->
+      <div id="donePanel" class="done-panel hidden">
+        <div class="done-emoji">🎉</div>
+        <h2 class="done-title">今日单词已完成！</h2>
+        <p class="done-desc">今天的词全部背完啦，明天再来吧</p>
+        <div class="done-stats">
+          <div class="stat"><b id="doneTotal">20</b><span>完成词数</span></div>
+          <div class="stat"><b id="doneCorrect">0</b><span>答对题数</span></div>
+          <div class="stat"><b id="doneRate">--</b><span>正确率</span></div>
+        </div>
+        <button id="restartBtn" class="btn-main">重新练习</button>
+      </div>
+    </div>
+
+    <!-- tab 2：复习 -->
+    <div id="tab-review" class="page hidden">
+      <div class="panel-head">
+        <h2>错词本</h2>
+        <p>答错的词都会进入这里，共 <b id="wrongCount">0</b> 个</p>
+      </div>
+
+      <div id="reviewList"></div>
+
+      <div id="reviewEmpty" class="empty">
+        <span class="big">🌱</span>
+        还没有错词，去背单词吧
+      </div>
+
+      <div class="bottom-act">
+        <button id="clearWrong" class="btn-ghost">清空</button>
+      </div>
+    </div>
+
+    <!-- tab 3：发现 -->
+    <div id="tab-discover" class="page hidden">
+      <div class="panel-head">
+        <h2>发现</h2>
+        <p>占位页面</p>
+      </div>
+
+      <div class="grid">
+        <button class="gcard" data-name="单词电台"><span class="ic">📻</span><span>单词电台</span></button>
+        <button class="gcard" data-name="学习小班"><span class="ic">👥</span><span>学习小班</span></button>
+      </div>
+    </div>
+
+    <!-- tab 4：我的 -->
+    <div id="tab-me" class="page hidden">
+      <div class="profile">
+        <div class="avatar" id="meAvatar">😎</div>
+        <div>
+          <div class="pname" id="meName">单词侠</div>
+          <div class="pphone" id="mePhone">138****0000</div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><b id="statLearned">0</b><span>已学词数</span></div>
+        <div class="stat"><b id="statRate">--</b><span>答对率</span></div>
+        <div class="stat"><b>1</b><span>连续打卡</span></div>
+      </div>
+
+      <p class="metip">数据保存在浏览器本地（localStorage），刷新不丢失</p>
+      <button id="themeToggle" class="btn-ghost">🌙 深色模式</button>
+      <button id="logoutBtn" class="btn-ghost">退出登录</button>
+    </div>
+
+    <!-- ---------- 底部导航 ---------- -->
+    <!-- 改这里：想加 tab 就在这儿加一个按钮，并在上面加对应的 .page 容器 -->
+    <nav class="tabbar">
+      <button class="tabbtn active" data-tab="word">
+        <svg viewBox="0 0 24 24"><path d="M4 4h7a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H4z"/><path d="M20 4h-3a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H20z"/></svg>
+        背单词
+      </button>
+      <button class="tabbtn" data-tab="review">
+        <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><polyline points="21 3 21 9 15 9"/></svg>
+        复习
+      </button>
+      <button class="tabbtn" data-tab="discover">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polygon points="16 8 13.5 13.5 8 16 10.5 10.5"/></svg>
+        发现
+      </button>
+      <button class="tabbtn" data-tab="me">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+        我的
+      </button>
+    </nav>
+
+  </section>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ==========================================================
+   01 数据
+   ========================================================== */
+
+/* 改这里：换成你自己的单词。
+   字段说明：
+   word 单词 / phonetic 音标 / pos 词性 / meaning 中文释义
+   sentence 英文例句 / sentenceCN 例句翻译 / emoji 卡片大图 */
+const WORDS = [
+  { word:"abandon",    phonetic:"/əˈbændən/",    pos:"v.",   meaning:"放弃",     emoji:"🏚️",
+    sentence:"They had to abandon the car.",              sentenceCN:"他们不得不弃车。" },
+  { word:"ambition",   phonetic:"/æmˈbɪʃn/",     pos:"n.",   meaning:"雄心",     emoji:"🏆",
+    sentence:"Her ambition is to become a doctor.",       sentenceCN:"她的志向是成为一名医生。" },
+  { word:"benefit",    phonetic:"/ˈbenɪfɪt/",    pos:"n.",   meaning:"益处",     emoji:"🎁",
+    sentence:"Exercise has many health benefits.",        sentenceCN:"运动有很多健康益处。" },
+  { word:"curious",    phonetic:"/ˈkjʊəriəs/",   pos:"adj.", meaning:"好奇的",   emoji:"🔍",
+    sentence:"I'm curious about how it works.",           sentenceCN:"我很好奇它是怎么运作的。" },
+  { word:"delicate",   phonetic:"/ˈdelɪkət/",    pos:"adj.", meaning:"精致的",   emoji:"🍰",
+    sentence:"She wore a delicate silver ring.",          sentenceCN:"她戴着一枚精致的银戒指。" },
+  { word:"efficient",  phonetic:"/ɪˈfɪʃnt/",     pos:"adj.", meaning:"高效的",   emoji:"⚡",
+    sentence:"This new method is much more efficient.",   sentenceCN:"这个新方法高效得多。" },
+  { word:"fragile",    phonetic:"/ˈfrædʒaɪl/",   pos:"adj.", meaning:"易碎的",   emoji:"🥚",
+    sentence:"Be careful, the glass is fragile.",         sentenceCN:"小心，这玻璃容易碎。" },
+  { word:"generous",   phonetic:"/ˈdʒenərəs/",   pos:"adj.", meaning:"慷慨的",   emoji:"🤝",
+    sentence:"She is generous to everyone.",              sentenceCN:"她对每个人都很慷慨。" },
+  { word:"hesitate",   phonetic:"/ˈhezɪteɪt/",   pos:"v.",   meaning:"犹豫",     emoji:"🚦",
+    sentence:"Don't hesitate to ask for help.",           sentenceCN:"需要帮助时别犹豫。" },
+  { word:"inspire",    phonetic:"/ɪnˈspaɪə(r)/", pos:"v.",   meaning:"激励",     emoji:"💡",
+    sentence:"Her story inspired many young people.",     sentenceCN:"她的故事激励了很多年轻人。" },
+  { word:"jealous",    phonetic:"/ˈdʒeləs/",     pos:"adj.", meaning:"嫉妒的",   emoji:"😒",
+    sentence:"He was jealous of her success.",            sentenceCN:"他嫉妒她的成功。" },
+  { word:"landscape",  phonetic:"/ˈlændskeɪp/",  pos:"n.",   meaning:"风景",     emoji:"🏞️",
+    sentence:"We stopped to enjoy the landscape.",        sentenceCN:"我们停下来欣赏风景。" },
+  { word:"moderate",   phonetic:"/ˈmɒdərət/",    pos:"adj.", meaning:"适度的",   emoji:"🌤️",
+    sentence:"Moderate exercise is good for you.",        sentenceCN:"适度的运动对你有好处。" },
+  { word:"negotiate",  phonetic:"/nɪˈɡəʊʃieɪt/", pos:"v.",   meaning:"谈判",     emoji:"📝",
+    sentence:"They negotiated a new contract.",           sentenceCN:"他们谈成了一份新合同。" },
+  { word:"obvious",    phonetic:"/ˈɒbviəs/",     pos:"adj.", meaning:"明显的",   emoji:"❗",
+    sentence:"The answer is obvious to everyone.",        sentenceCN:"答案对每个人都很明显。" },
+  { word:"persistent", phonetic:"/pəˈsɪstənt/",  pos:"adj.", meaning:"坚持的",   emoji:"🧗",
+    sentence:"Her persistent efforts finally paid off.",  sentenceCN:"她坚持不懈的努力终于有了回报。" },
+  { word:"quarrel",    phonetic:"/ˈkwɒrəl/",     pos:"v.",   meaning:"争吵",     emoji:"💢",
+    sentence:"They quarreled about money again.",         sentenceCN:"他们又为了钱吵架。" },
+  { word:"reluctant",  phonetic:"/rɪˈlʌktənt/",  pos:"adj.", meaning:"不情愿的", emoji:"😕",
+    sentence:"She was reluctant to leave.",               sentenceCN:"她不愿意离开。" },
+  { word:"sacrifice",  phonetic:"/ˈsækrɪfɪs/",   pos:"n.",   meaning:"牺牲",     emoji:"🕯️",
+    sentence:"Every success requires some sacrifice.",    sentenceCN:"每一次成功都需要一些牺牲。" },
+  { word:"tolerate",   phonetic:"/ˈtɒləreɪt/",   pos:"v.",   meaning:"容忍",     emoji:"🧘",
+    sentence:"I can't tolerate that noise.",              sentenceCN:"我受不了那种噪音。" }
+];
+
+/* ==========================================================
+   02 状态（保存到 localStorage，刷新不丢失）
+   ========================================================== */
+const STORAGE_KEY = "wordSlash_state";
+
+const defaultState = {
+  user:{ phone:"", name:"", avatar:"😎" },
+  i:0,             // 当前第几个词
+  answered:0,      // 一共答了几题
+  correct:0,       // 答对几题
+  wrong:[],        // 错词本
+  locked:false,    // 选项锁定（防止连点，不持久化）
+  inited:false,    // 是否已经初始化过一轮
+  done:false,      // 今日单词是否已完成
+  tab:"word"
+};
+
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { ...defaultState };
+    const saved = JSON.parse(raw) || {};
+    return {
+      ...defaultState,
+      ...saved,
+      user:     { ...defaultState.user, ...(saved.user || {}) },
+      i:        Number.isInteger(saved.i) && saved.i >= 0 && saved.i <= WORDS.length ? saved.i : 0,
+      answered: Number.isFinite(saved.answered) ? saved.answered : 0,
+      correct:  Number.isFinite(saved.correct) ? saved.correct : 0,
+      wrong:    Array.isArray(saved.wrong) ? saved.wrong : [],
+      locked:   false,
+      done:     saved.done === true,
+      tab:      ["word","review","discover","me"].includes(saved.tab) ? saved.tab : "word"
+    };
+  } catch(e){
+    return { ...defaultState };
+  }
+}
+
+function saveState(){
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, locked: false }));
+  } catch(e){
+    // 隐私模式等场景下 localStorage 不可用，静默降级为内存存储
+  }
+}
+
+const state = loadState();
+
+let current = null;   // 当前词对象
+
+/* ==========================================================
+   03 逻辑
+   ========================================================== */
+const $ = id => document.getElementById(id);
+const loginPage = $("loginPage");
+const mainPage  = $("mainPage");
+const card      = $("card");
+const scene     = document.querySelector(".scene");
+const optionsEl = $("options");
+
+/* ---------- 轻提示 ---------- */
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 1800);
+}
+
+/* ---------- 洗牌 ---------- */
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ---------- 朗读：先试真人发音，失败退回系统语音 ---------- */
+/* 为什么要这样：
+   浏览器的 speechSynthesis 在手机上很不可靠——
+   安卓很多机型没装英文语音包，iOS 打开静音开关也会被屏蔽，
+   微信内置浏览器支持更差。所以优先用在线音频，系统语音只当兜底。 */
+let audioEl = null;
+let spokenOK = false;
+
+function speak(word){
+  spokenOK = false;
+  let fellBack = false;
+  const fallback = ()=>{ if (fellBack) return; fellBack = true; tts(word); };
+
+  // 1) 在线真人发音（美音）
+  try {
+    if (audioEl){ audioEl.pause(); audioEl = null; }
+    audioEl = new Audio("https://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(word) + "&type=2");
+    audioEl.onerror = fallback;
+    audioEl.oncanplay = ()=>{ spokenOK = true; };
+    const p = audioEl.play();
+    if (p && typeof p.catch === "function"){ p.catch(fallback); }
+  } catch (e){
+    fallback();
+  }
+}
+
+/* 兜底：系统语音引擎 */
+function tts(word){
+  if (!("speechSynthesis" in window)){ toast("这台设备放不出声音，检查一下静音开关"); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(word);
+  u.lang = "en-US";
+  u.rate = 0.9;
+  u.onerror = ()=>{ toast("当前可能是静音"); };
+  window.speechSynthesis.speak(u);
+}
+
+/* ---------- 生成四个选项 ---------- */
+function buildOptions(word){
+  const others = WORDS.filter(w => w.word !== word.word);
+  const picks  = shuffle(others).slice(0, 3);
+  return shuffle([
+    { text: word.meaning, correct: true },
+    ...picks.map(w => ({ text: w.meaning, correct: false }))
+  ]);
+}
+
+/* ---------- 渲染当前这张卡 ---------- */
+function renderWord(){
+  current = WORDS[state.i];
+
+  // 回到答题视图（若之前处于完成状态）
+  scene.classList.remove("hidden");
+  optionsEl.classList.remove("hidden");
+  $("donePanel").classList.add("hidden");
+
+  // 先把卡片瞬间转回正面（关掉过渡，避免看到翻页过程）
+  card.style.transition = "none";
+  card.classList.remove("flipped");
+  void card.offsetWidth;
+  card.style.transition = "";
+
+  $("wEmoji").textContent    = current.emoji;
+  $("wWord").textContent     = current.word;
+  $("wPhonetic").textContent = current.phonetic;
+  $("wPos").textContent      = current.pos;
+  $("wMeaning").textContent  = current.meaning;
+  $("wSent").textContent     = current.sentence;
+  $("wSentCn").textContent   = current.sentenceCN;
+
+  $("nowNum").textContent   = state.i + 1;
+  $("totalNum").textContent = WORDS.length;
+  $("progBar").style.width  = (state.i / WORDS.length * 100) + "%";
+
+  // 四个选项
+  optionsEl.innerHTML = "";
+  buildOptions(current).forEach((opt, n)=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.innerHTML = '<span class="idx">' + (n + 1) + '</span><span>' + opt.text + '</span>';
+    if (opt.correct) btn.dataset.correct = "1";
+    btn.addEventListener("click", ()=> choose(btn, opt));
+    optionsEl.appendChild(btn);
+  });
+
+  // 新词入场动画
+  scene.classList.remove("word-in");
+  void scene.offsetWidth;
+  scene.classList.add("word-in");
+}
+
+/* ---------- 翻卡 ---------- */
+function flipCard(){
+  if (state.locked || state.done) return;
+  card.classList.toggle("flipped");
+}
+
+/* ---------- 选择答案 ---------- */
+function choose(btn, opt){
+  if (state.locked) return;
+  state.locked = true;
+  state.answered++;
+
+  if (opt.correct){
+    state.correct++;
+    btn.classList.add("right");
+    setTimeout(()=>{ state.locked = false; nextWord(); }, 800);
+  } else {
+    btn.classList.add("wrong");
+    // 标出正确答案
+    Array.from(optionsEl.children).forEach(b=>{
+      if (b.dataset.correct === "1") b.classList.add("right");
+    });
+    // 记进错词本（同一个词只记一次）
+    if (!state.wrong.some(w => w.word === current.word)) state.wrong.push(current);
+    // 翻到背面，让人看一眼答案
+    card.classList.add("flipped");
+    setTimeout(()=>{ state.locked = false; nextWord(); }, 1800);
+  }
+  saveState();
+}
+
+/* ---------- 今日完成面板 ---------- */
+function renderDone(){
+  state.done = true;
+  $("progBar").style.width = "100%";
+  $("nowNum").textContent = WORDS.length;
+  $("totalNum").textContent = WORDS.length;
+
+  scene.classList.add("hidden");
+  optionsEl.classList.add("hidden");
+  const panel = $("donePanel");
+  panel.classList.remove("hidden");
+  $("doneTotal").textContent = WORDS.length;
+  $("doneCorrect").textContent = state.correct;
+  $("doneRate").textContent = state.answered
+    ? Math.round(state.correct / state.answered * 100) + "%" : "--";
+
+  panel.classList.remove("page-in");
+  void panel.offsetWidth;
+  panel.classList.add("page-in");
+  saveState();
+}
+
+/* ---------- 下一个词 ---------- */
+function nextWord(){
+  state.i++;
+  if (state.i >= WORDS.length){
+    state.i = WORDS.length;
+    renderDone();
+    toast("今天的 " + WORDS.length + " 词全部背完！ 🎉");
+    return;
+  }
+  saveState();
+  renderWord();
+}
+
+/* ---------- 复习页 ---------- */
+function renderReview(){
+  const list  = $("reviewList");
+  const empty = $("reviewEmpty");
+  list.innerHTML = "";
+
+  if (state.wrong.length === 0){
+    empty.classList.remove("hidden");
+    list.classList.add("hidden");
+  } else {
+    empty.classList.add("hidden");
+    list.classList.remove("hidden");
+    state.wrong.forEach(w=>{
+      const div = document.createElement("div");
+      div.className = "review-item";
+      div.innerHTML =
+        '<div class="ri-top"><b>' + w.word + '</b><span>' + w.phonetic + '</span></div>' +
+        '<div class="ri-bot">' + w.pos + " " + w.meaning + '</div>';
+      list.appendChild(div);
+    });
+  }
+  $("wrongCount").textContent = state.wrong.length;
+}
+
+/* ---------- 我的页 ---------- */
+function renderMe(){
+  $("meAvatar").textContent = state.user.avatar;
+  $("meName").textContent   = state.user.name || "同学";
+  $("mePhone").textContent  = state.user.phone
+    ? state.user.phone.replace(/^(\d{3})\d{4}(\d{0,4})$/, "$1****$2")
+    : "未登录";
+  $("statLearned").textContent = state.answered;
+  $("statRate").textContent = state.answered
+    ? Math.round(state.correct / state.answered * 100) + "%"
+    : "--";
+}
+
+/* ---------- 切换 tab ---------- */
+function setTab(name){
+  state.tab = name;
+  saveState();
+  ["word","review","discover","me"].forEach(t=>{
+    $("tab-" + t).classList.toggle("hidden", t !== name);
+  });
+  document.querySelectorAll(".tabbtn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.tab === name);
+  });
+  if (name === "review") renderReview();
+  if (name === "me")     renderMe();
+
+  // 页面切换动画
+  const page = $("tab-" + name);
+  page.classList.remove("page-in");
+  void page.offsetWidth;
+  page.classList.add("page-in");
+}
+
+/* ---------- 登录 ---------- */
+$("loginBtn").addEventListener("click", ()=>{
+  const phone = $("phone").value.trim();
+  const pwd   = $("pwd").value.trim();
+
+  if (!phone || !pwd){ toast("请输入信息！"); return; }
+  if (!/^\d{5,20}$/.test(phone)){ toast("手机号长度应介于[5,20]之间且为纯数字！"); return; }
+
+  state.user.phone = phone;
+  state.user.name  = "用户 " + phone.slice(-4);
+  saveState();
+
+  loginPage.classList.add("hidden");
+  mainPage.classList.remove("hidden");
+  mainPage.classList.remove("page-in");
+  void mainPage.offsetWidth;
+  mainPage.classList.add("page-in");
+
+  if (state.done) renderDone();
+  else if (!state.inited){
+    state.inited = true;
+    renderWord();
+  }
+  setTab("word");
+});
+
+/* ---------- 退出 ---------- */
+$("logoutBtn").addEventListener("click", ()=>{
+  mainPage.classList.add("hidden");
+  loginPage.classList.remove("hidden");
+  loginPage.classList.remove("page-in");
+  void loginPage.offsetWidth;
+  loginPage.classList.add("page-in");
+  $("pwd").value = "";
+  $("phone").value = "";
+
+  // 清除本应用保存的数据（保留共享的 theme 主题偏好）
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+  Object.assign(state, defaultState, {
+    user:  { ...defaultState.user },
+    wrong: []
+  });
+  toast("已退出登录，本地数据已清除");
+});
+
+/* ---------- 清空错词本 ---------- */
+$("clearWrong").addEventListener("click", ()=>{
+  if (state.wrong.length === 0){ toast("错词本本来就是空的"); return; }
+  state.wrong = [];
+  saveState();
+  renderReview();
+  toast("错词本已清空");
+});
+
+/* ---------- 重新练习（主动开始新一轮，不再自动从头开始） ---------- */
+$("restartBtn").addEventListener("click", ()=>{
+  state.i = 0;
+  state.done = false;
+  state.answered = 0;
+  state.correct = 0;
+  state.locked = false;
+  saveState();
+  renderWord();
+  toast("已重新开始今天的单词");
+});
+
+/* ---------- 底部导航 ---------- */
+document.querySelectorAll(".tabbtn").forEach(btn=>{
+  btn.addEventListener("click", ()=> setTab(btn.dataset.tab));
+});
+
+/* ---------- 卡片与喇叭 ---------- */
+card.addEventListener("click", flipCard);
+
+$("speakBtn").addEventListener("click", e=>{
+  e.stopPropagation();
+  if (current) speak(current.word);
+});
+
+/* ---------- 发现页占位 ---------- */
+document.querySelectorAll(".gcard").forEach(c=>{
+  c.addEventListener("click", ()=> toast(" demo 未实现功能：" + c.dataset.name));
+});
+
+/* ---------- 键盘：空格翻卡，1-4 选选项 ---------- */
+document.addEventListener("keydown", e=>{
+  if (mainPage.classList.contains("hidden")) return;
+  if (state.tab !== "word" || state.done) return;
+
+  if (e.code === "Space"){
+    e.preventDefault();
+    flipCard();
+    return;
+  }
+  const n = parseInt(e.key, 10);
+  if (n >= 1 && n <= 4){
+    const btns = optionsEl.querySelectorAll(".opt");
+    if (btns[n - 1]) btns[n - 1].click();
+  }
+});
+
+/* ---------- 主题切换（与 index.html 共用 localStorage 的 theme 键） ---------- */
+(function () {
+    var themeToggle = $("themeToggle");
+    var root = document.documentElement;
+    function safeGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+    function safeSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+    function applyTheme(t) {
+        root.setAttribute('data-theme', t);
+        if (themeToggle) themeToggle.textContent = t === 'dark' ? '☀️ 浅色模式' : '🌙 深色模式';
+    }
+    function getInitialTheme() {
+        var s = safeGet('theme');
+        if (s === 'dark' || s === 'light') return s;
+        try { return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+        catch(e){ return 'light'; }
+    }
+    applyTheme(getInitialTheme());
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function () {
+            var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
+            safeSet('theme', next);
+        });
+    }
+})();
+
+/* ---------- 启动：恢复上次的登录态与学习进度 ---------- */
+(function restoreSession(){
+  if (state.user && state.user.phone){
+    loginPage.classList.add("hidden");
+    mainPage.classList.remove("hidden");
+    mainPage.classList.add("page-in");
+    if (!state.inited){
+      state.inited = true;
+      saveState();
+    }
+    if (state.done) renderDone();
+    else renderWord();
+    setTab(state.tab);
+  } else {
+    setTab("word");
+  }
+})();
+</script>
+</body>
+</html>
