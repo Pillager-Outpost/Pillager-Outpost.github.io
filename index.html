@@ -4,244 +4,192 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>刘智中 · 个人主页</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>">
     <style>
-        /* 全局重置与设计变量 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* ===== 主题变量（浅色 / 深色） ===== */
+        :root {
+            --bg1: #E0F2FE;
+            --bg2: #F0FDF4;
+            --card: rgba(255, 255, 255, 0.85);
+            --text: #1E293B;
+            --text-muted: #64748B;
+            --border: rgba(203, 213, 225, 0.6);
+            --accent: #0EA5E9;
+            --highlight-bg: #BAE6FD;
+            --highlight-text: #0369A1;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 12px 32px rgba(14, 165, 233, 0.15);
+            --notice-bg: rgba(254, 249, 195, 0.7);
+            --notice-border: #EAB308;
+            --btn-bg: #0EA5E9;
+            --btn-text: #fff;
+            --tag-bg: rgba(14, 165, 233, 0.08);
+            --tag-border: rgba(14, 165, 233, 0.2);
+            --tag-text: #0369A1;
+            --modal-bg: rgba(255, 255, 255, 0.95);
+        }
+        html[data-theme="dark"] {
+            --bg1: #0B1120;
+            --bg2: #111827;
+            --card: rgba(30, 41, 59, 0.85);
+            --text: #E2E8F0;
+            --text-muted: #94A3B8;
+            --border: rgba(51, 65, 85, 0.8);
+            --accent: #38BDF8;
+            --highlight-bg: #0C4A6E;
+            --highlight-text: #7DD3FC;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 12px 32px rgba(56, 189, 248, 0.2);
+            --notice-bg: rgba(42, 36, 16, 0.7);
+            --notice-border: #EAB308;
+            --btn-bg: #38BDF8;
+            --btn-text: #0B1120;
+            --tag-bg: rgba(56, 189, 248, 0.12);
+            --tag-border: rgba(56, 189, 248, 0.25);
+            --tag-text: #7DD3FC;
+            --modal-bg: rgba(30, 41, 59, 0.98);
         }
 
-        :root {
-            --bg: #f7f7f7;
-            --card-bg: #ffffff;
-            --text-primary: #1a1a1a;
-            --text-secondary: #5e5e5e;
-            --accent: #2b6e5e;          /* 沉静的墨绿 */
-            --accent-light: #e7f0ed;
-            --border: #eaeaea;
-            --shadow-sm: 0 6px 16px rgba(0, 0, 0, 0.02);
-            --shadow-hover: 0 12px 28px rgba(0, 0, 0, 0.04);
-            --radius: 24px;
-            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: var(--font);
-            background: var(--bg);
-            color: var(--text-primary);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            background: linear-gradient(160deg, var(--bg1), var(--bg2));
+            background-attachment: fixed;
+            color: var(--text);
+            font-family: "华文中宋", "STZhongsong", "SimSun", serif;
+            line-height: 1.8;
+            padding: 48px 20px;
             min-height: 100vh;
+            transition: background 0.4s, color 0.3s;
         }
 
-        /* 主容器——优雅的卡片式布局 */
-        .homepage {
-            max-width: 1100px;
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 2.2fr;
-            gap: 1.8rem;
+        .container { max-width: 860px; margin: 0 auto; }
+
+        /* ===== 入场动画 ===== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 通用卡片样式 */
         .card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
+            background: var(--card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            padding: 2rem 1.8rem;
+            border-radius: 18px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.3s, transform 0.3s, background 0.3s, border-color 0.3s;
+            animation: fadeUp 0.6s ease both;
         }
-
+        .card:nth-child(1) { animation-delay: 0s; }
+        .card:nth-child(2) { animation-delay: 0.08s; }
+        .card:nth-child(3) { animation-delay: 0.16s; }
+        .card:nth-child(4) { animation-delay: 0.24s; }
+        .card:nth-child(5) { animation-delay: 0.32s; }
         .card:hover {
             box-shadow: var(--shadow-hover);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
         }
 
-        /* 左侧个人信息卡片 (sticky 跟随滚动) */
-        .profile-card {
-            position: sticky;
-            top: 2rem;
-            height: fit-content;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* ===== 头部 ===== */
+        .hero {
             text-align: center;
+            font-size: 2.6em;
+            font-weight: normal;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 1.3em;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
         }
 
-        .avatar {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-light), #d0e0db);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            border: 3px solid white;
-            box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.1);
+        .highlight {
+            background: linear-gradient(120deg, var(--highlight-bg) 0%, var(--highlight-bg) 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 40%;
+            background-position: 0 88%;
+            padding: 0 8px;
+            color: var(--highlight-text);
+            transition: background 0.3s, color 0.3s;
         }
 
-        .avatar svg {
-            width: 60px;
-            height: 60px;
-            color: var(--accent);
-            opacity: 0.85;
-        }
-
-        .profile-name {
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.2;
-            margin-bottom: 0.35rem;
-        }
-
-        .profile-title {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--accent);
-            background: var(--accent-light);
-            padding: 0.4rem 1.2rem;
-            border-radius: 100px;
-            display: inline-block;
-            margin-bottom: 1.2rem;
-            letter-spacing: 0.3px;
-        }
-
-        .profile-bio {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 1.8rem;
-            max-width: 240px;
-        }
-
-        /* 社交链接区域 */
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 0.5rem;
-        }
-
-        .social-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: #f2f2f2;
-            color: var(--text-primary);
-            transition: all 0.2s ease;
-            text-decoration: none;
-            border: 1px solid transparent;
-        }
-
-        .social-link svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .social-link:hover {
-            background: var(--accent);
-            color: white;
-            transform: scale(1.05);
-            border-color: var(--accent);
-        }
-
-        .social-link:hover svg {
-            fill: white;
-        }
-
-        /* 右侧主要区域 —— 纵向排列 */
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1.8rem;
-        }
-
-        /* 各区块标题 */
+        /* ===== 卡片标题 ===== */
         .section-title {
+            font-size: 1.05em;
+            font-weight: normal;
+            color: var(--accent);
+            letter-spacing: 0.2em;
+            margin-bottom: 18px;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 1.25rem;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-            margin-bottom: 1.6rem;
+            gap: 8px;
         }
-
         .section-title svg {
-            width: 22px;
-            height: 22px;
-            color: var(--accent);
+            width: 18px;
+            height: 18px;
             flex-shrink: 0;
+            opacity: 0.9;
         }
 
-        /* 关于我 / 简短介绍 */
-        .about-text p {
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            font-size: 1rem;
-        }
+        p { font-size: 1.05em; margin-bottom: 14px; }
+        p:last-child { margin-bottom: 0; }
 
-        .about-text p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* 技能标签 */
+        /* ===== 技能标签 ===== */
         .skills-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.7rem 0.8rem;
+            gap: 10px;
         }
-
         .skill-tag {
-            background: #f5f5f5;
-            padding: 0.5rem 1.25rem;
+            padding: 6px 18px;
+            font-size: 0.9em;
+            color: var(--tag-text);
+            background: var(--tag-bg);
+            border: 1px solid var(--tag-border);
             border-radius: 100px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-            transition: all 0.15s ease;
+            transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
         }
-
         .skill-tag:hover {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border-color: var(--btn-bg);
+            transform: translateY(-2px);
         }
 
-        /* 项目 / 作品卡片布局 */
+        /* ===== 项目卡片 ===== */
         .projects-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.25rem;
-        }
-
-        .project-item {
             display: flex;
             flex-direction: column;
-            padding: 1.5rem;
-            background: #fafafa;
-            border-radius: 18px;
-            border: 1px solid var(--border);
-            transition: all 0.2s ease;
+            gap: 16px;
         }
-
+        .project-item {
+            padding: 20px 22px;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: background 0.25s, border-color 0.25s, transform 0.2s, box-shadow 0.25s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        html[data-theme="dark"] .project-item {
+            background: rgba(255, 255, 255, 0.04);
+        }
         .project-item:hover {
-            background: white;
-            border-color: var(--accent-light);
-            box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.75);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.12);
+        }
+        html[data-theme="dark"] .project-item:hover {
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .project-header {
@@ -249,303 +197,497 @@
             justify-content: space-between;
             align-items: baseline;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 0.65rem;
+            gap: 8px;
+            margin-bottom: 8px;
         }
-
         .project-name {
-            font-weight: 600;
-            font-size: 1.15rem;
-            letter-spacing: -0.01em;
+            font-size: 1.15em;
+            font-weight: bold;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        a.project-item .project-name::after {
+            content: '↗';
+            font-size: 0.85em;
+            color: var(--accent);
+            opacity: 0.7;
+            transition: opacity 0.2s, transform 0.2s;
+            transform: translateY(-1px);
+        }
+        a.project-item:hover .project-name::after {
+            opacity: 1;
+            transform: translate(1px, -2px);
         }
 
         .project-year {
-            font-size: 0.8rem;
+            font-size: 0.78em;
             color: var(--accent);
-            background: var(--accent-light);
-            padding: 0.2rem 0.8rem;
+            background: var(--tag-bg);
+            border: 1px solid var(--tag-border);
+            padding: 2px 12px;
             border-radius: 100px;
-            font-weight: 500;
+            white-space: nowrap;
         }
-
         .project-desc {
-            color: var(--text-secondary);
-            font-size: 0.92rem;
-            margin-bottom: 1rem;
-            line-height: 1.5;
+            font-size: 0.95em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            line-height: 1.7;
         }
-
         .project-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 6px;
         }
-
         .project-tags span {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.9rem;
-            background: #ececec;
+            font-size: 0.78em;
+            padding: 2px 12px;
+            background: var(--tag-bg);
+            border: 1px solid var(--tag-border);
             border-radius: 100px;
-            color: #3a3a3a;
-            font-weight: 500;
+            color: var(--tag-text);
         }
 
-        /* 联系方式卡片 */
-        .contact-info {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
+        /* ===== 联系 ===== */
         .contact-row {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            font-size: 1rem;
+            gap: 12px;
+            font-size: 1.05em;
         }
-
         .contact-row svg {
             width: 20px;
             height: 20px;
             color: var(--accent);
             flex-shrink: 0;
         }
-
-        .contact-row a {
-            color: var(--text-primary);
+        a {
+            color: var(--accent);
             text-decoration: none;
             border-bottom: 1px solid transparent;
-            transition: border 0.2s;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        a:hover { border-bottom-color: var(--accent); }
+
+        /* ===== 页脚 ===== */
+        .footer { color: var(--text-muted); font-size: 0.95em; }
+        .footer p { margin-bottom: 6px; font-size: 0.95em; }
+        .footer p:last-child { margin-bottom: 0; }
+
+        /* ===== 按钮 ===== */
+        .btn {
+            padding: 10px 22px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text);
+            font-size: 0.95em;
+            font-family: inherit;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition: background 0.2s, transform 0.15s, color 0.2s, border-color 0.2s;
+        }
+        html[data-theme="dark"] .btn { background: rgba(255, 255, 255, 0.06); }
+        .btn:hover {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border-color: var(--btn-bg);
+            transform: translateY(-2px);
         }
 
-        .contact-row a:hover {
-            border-bottom-color: var(--accent);
+        /* ===== 弹窗 ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 3000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: var(--modal-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 32px 28px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            transform: scale(0.92);
+            opacity: 0;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+        }
+        .modal-overlay.show .modal-box {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-emoji {
+            font-size: 2.8em;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .modal-title {
+            font-size: 1.3em;
+            font-weight: normal;
+            margin-bottom: 10px;
             color: var(--accent);
         }
-
-        /* 页脚——轻量版权 */
-        .footer-note {
-            grid-column: 1 / -1;
-            text-align: center;
-            margin-top: 1rem;
-            color: #9b9b9b;
-            font-size: 0.8rem;
-            letter-spacing: 0.2px;
+        .modal-desc {
+            font-size: 0.95em;
+            color: var(--text-muted);
+            margin-bottom: 22px;
+            line-height: 1.7;
+        }
+        .modal-close {
+            padding: 10px 28px;
+            font-size: 1em;
+            font-family: inherit;
+            color: var(--btn-text);
+            background: var(--btn-bg);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s;
+        }
+        .modal-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(14, 165, 233, 0.3);
         }
 
-        /* 响应式：平板及手机 */
-        @media (max-width: 800px) {
-            body {
-                padding: 1.2rem;
-            }
-            .homepage {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            .profile-card {
-                position: static;
-            }
-            .profile-bio {
-                max-width: 100%;
-            }
-            .card {
-                padding: 1.8rem 1.5rem;
-            }
+        /* ===== 可点击的“作”字 ===== */
+        .clickable-char {
+            cursor: pointer;
+            transition: color 0.2s ease, text-shadow 0.2s ease;
+            position: relative;
+            display: inline-block;
+        }
+        .clickable-char:hover {
+            color: var(--accent);
+            text-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+        }
+        .clickable-char.clicked {
+            color: #ff3b3b !important;
+            text-shadow: 0 0 10px rgba(255, 59, 59, 0.35);
         }
 
-        @media (max-width: 480px) {
-            .profile-name {
-                font-size: 1.8rem;
-            }
-            .avatar {
-                width: 110px;
-                height: 110px;
-            }
-            .avatar svg {
-                width: 50px;
-                height: 50px;
-            }
-            .section-title {
-                font-size: 1.15rem;
-            }
-            .projects-grid {
-                gap: 1rem;
-            }
-            .project-item {
-                padding: 1.2rem;
-            }
+        /* ===== 返回顶部 ===== */
+        #backToTop {
+            position: fixed;
+            right: 24px; bottom: 24px;
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            font-size: 1.3em;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            z-index: 999;
+        }
+        #backToTop.show { display: flex; }
+        #backToTop:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(14, 165, 233, 0.45); }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 600px) {
+            body { padding: 24px 14px; }
+            .card { padding: 22px 18px; }
+            .hero { font-size: 1.9em; }
+            .subtitle { font-size: 1.05em; }
+            .section-title { font-size: 1em; }
+            p { font-size: 1em; }
+            .project-item { padding: 16px; }
+            #backToTop { right: 16px; bottom: 16px; width: 44px; height: 44px; }
         }
 
-        /* 细微的动效 */
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @media (prefers-reduced-motion: reduce) {
+            .card, .modal-box, .modal-overlay { animation: none; transition: none; }
+            .card:hover, .btn:hover, #backToTop:hover, a.project-item:hover { transform: none; }
         }
-
-        .card {
-            animation: fadeUp 0.5s ease backwards;
-        }
-
-        .main-content .card:nth-child(1) { animation-delay: 0.05s; }
-        .main-content .card:nth-child(2) { animation-delay: 0.1s; }
-        .main-content .card:nth-child(3) { animation-delay: 0.15s; }
-        .main-content .card:nth-child(4) { animation-delay: 0.2s; }
-        .profile-card { animation-delay: 0s; }
     </style>
 </head>
 <body>
-    <div class="homepage">
-        <!-- 左侧卡片：头像 & 简介 & 社交 -->
-        <aside class="card profile-card">
-            <div class="avatar">
-                <!-- 内联 SVG 替换原图标字体 -->
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+
+    <div class="container">
+
+        <!-- ===== 头部 ===== -->
+        <div class="card" style="text-align:center">
+            <h1 class="hero">你好，我是 <span class="highlight">刘智中</span></h1>
+            <p class="subtitle">喜欢 C++ 的高中生 · 保持好奇，保持创造</p>
+        </div>
+
+        <!-- ===== 关于我 ===== -->
+        <div class="card">
+            <h2 class="section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="8" r="4"></circle>
                     <path d="M5.5 21v-2a6.5 6.5 0 0 1 13 0v2"></path>
                 </svg>
+                关于我
+            </h2>
+            <p>你好！我是刘智中，一名对编程充满热情的高中生。平时喜欢琢磨 C++ 的底层原理、算法和性能优化，也乐于用 Python 写些小工具。</p>
+            <p>最近在尝试用 Raylib 作简单的游戏开发，正在慢慢搭建自己的作品集。保持学习，保持创造。</p>
+        </div>
+
+        <!-- ===== 技能 ===== -->
+        <div class="card">
+            <h2 class="section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                技能
+            </h2>
+            <div class="skills-grid">
+                <span class="skill-tag">C++</span>
+                <span class="skill-tag">GitHub</span>
+                <span class="skill-tag">Python</span>
+                <span class="skill-tag">Raylib</span>
             </div>
-            <h1 class="profile-name">刘智中</h1>
-            <div class="profile-title">喜欢C++的高中生</div>
-            <p class="profile-bio">
-                热爱编程与创造，正在用 C++ 和 Python 探索更大的世界。
-            </p>
-            <div class="social-links">
-                <!-- GitHub 内联SVG -->
-                <a href="https://github.com/pillager-outpost" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.8-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.59.69.48A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/>
-                    </svg>
+        </div>
+
+        <!-- ===== 精选项目 ===== -->
+        <div class="card">
+            <h2 class="section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z"></path>
+                    <path d="M3 7l9 6 9-6"></path>
+                </svg>
+                精选项目
+            </h2>
+            <div class="projects-grid">
+
+                <!-- MC Tools（无链接） -->
+                <div class="project-item">
+                    <div class="project-header">
+                        <span class="project-name">MC Tools（我的世界工具箱）</span>
+                        <span class="project-year">2025</span>
+                    </div>
+                    <p class="project-desc">为 Minecraft 玩家打造的实用工具箱，提供便捷的小功能合集，帮助简化游戏内外操作。</p>
+                    <div class="project-tags">
+                        <span>Python</span>
+                        <span>工具</span>
+                        <span>Minecraft</span>
+                    </div>
+                </div>
+
+                <!-- 2026 除夕の序曲（链接） -->
+                <a class="project-item" href="https://pillager-outpost.github.io/2026.html" target="_blank" rel="noopener noreferrer">
+                    <div class="project-header">
+                        <span class="project-name">2026 除夕の序曲</span>
+                        <span class="project-year">2026</span>
+                    </div>
+                    <p class="project-desc">一款以除夕为主题的小游戏，用代码营造节日氛围。</p>
+                    <div class="project-tags">
+                        <span>游戏</span>
+                        <span>Raylib</span>
+                        <span>C++</span>
+                    </div>
                 </a>
-                <!-- Twitter 等留空（不显示） -->
+
+                <!-- 2901 Island（链接） -->
+                <a class="project-item" href="https://pillager-outpost.github.io/2901space/" target="_blank" rel="noopener noreferrer">
+                    <div class="project-header">
+                        <span class="project-name">2901 Island</span>
+                        <span class="project-year">搭建中</span>
+                    </div>
+                    <p class="project-desc">一个正在搭建中的项目，更多细节即将揭晓，敬请期待。</p>
+                    <div class="project-tags">
+                        <span>进行中</span>
+                    </div>
+                </a>
+
             </div>
-        </aside>
+        </div>
 
-        <!-- 右侧主要内容区域 -->
-        <main class="main-content">
-            <!-- 关于我 -->
-            <section class="card">
-                <div class="section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="8" r="4"></circle>
-                        <path d="M5.5 21v-2a6.5 6.5 0 0 1 13 0v2"></path>
-                    </svg>
-                    <h2>关于我</h2>
-                </div>
-                <div class="about-text">
-                    <p>
-                        你好！我是刘智中，一名对编程充满热情的高中生。平时喜欢琢磨 C++ 的底层原理、算法和性能优化，也乐于用 Python 写些小工具。
-                    </p>
-                    <p>
-                        最近在尝试用 Raylib 做简单的游戏开发，正在慢慢搭建自己的作品集。保持学习，保持创造。
-                    </p>
-                </div>
-            </section>
+        <!-- ===== 联系 & 页脚 ===== -->
+        <div class="card">
+            <h2 class="section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                联系我
+            </h2>
+            <div class="contact-row" style="margin-bottom:20px">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.8-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.59.69.48A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/>
+                </svg>
+                <a href="https://github.com/pillager-outpost" target="_blank" rel="noopener noreferrer">github.com/pillager-outpost</a>
+            </div>
 
-            <!-- 技能标签 -->
-            <section class="card">
-                <div class="section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="16 18 22 12 16 6"></polyline>
-                        <polyline points="8 6 2 12 8 18"></polyline>
-                    </svg>
-                    <h2>技能</h2>
-                </div>
-                <div class="skills-grid">
-                    <span class="skill-tag">C++</span>
-                    <span class="skill-tag">GitHub</span>
-                    <span class="skill-tag">Python</span>
-                    <span class="skill-tag">Raylib</span>
-                </div>
-            </section>
+            <div class="footer">
+                <p>© 2026 刘智中 · 保持好奇，保持创造</p>
+                <p>鸣谢：DeepSeek、GitHub Pages</p>
+            </div>
+            <div style="margin-top:20px">
+                <button id="themeToggle" class="btn">🌙 深色模式</button>
+            </div>
+        </div>
 
-            <!-- 项目 / 作品展示（更新为真实项目） -->
-            <section class="card">
-                <div class="section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z"></path>
-                        <path d="M3 7l9 6 9-6"></path>
-                    </svg>
-                    <h2>精选项目</h2>
-                </div>
-                <div class="projects-grid">
-                    <!-- MC Tools -->
-                    <div class="project-item">
-                        <div class="project-header">
-                            <span class="project-name">MC Tools（我的世界工具箱）</span>
-                            <span class="project-year">2025</span>
-                        </div>
-                        <p class="project-desc">
-                            为 Minecraft 玩家打造的实用工具箱，提供便捷的小功能合集，帮助简化游戏内外操作。
-                        </p>
-                        <div class="project-tags">
-                            <span>Python</span>
-                            <span>工具</span>
-                            <span>Minecraft</span>
-                        </div>
-                    </div>
+    </div>
 
-                    <!-- 2026 除夕の序曲 -->
-                    <div class="project-item">
-                        <div class="project-header">
-                            <span class="project-name">2026 除夕の序曲</span>
-                            <span class="project-year">2026</span>
-                        </div>
-                        <p class="project-desc">
-                            一款以除夕为主题的小游戏，用代码营造节日氛围。
-                        </p>
-                        <div class="project-tags">
-                            <span>游戏</span>
-                            <span>Raylib</span>
-                            <span>C++</span>
-                        </div>
-                    </div>
+    <!-- ===== 返回顶部 ===== -->
+    <button id="backToTop" title="返回顶部">↑</button>
 
-                    <!-- 2901 Island -->
-                    <div class="project-item">
-                        <div class="project-header">
-                            <span class="project-name">2901 Island</span>
-                            <span class="project-year">搭建中</span>
-                        </div>
-                        <p class="project-desc">
-                            一个正在搭建中的项目，更多细节即将揭晓，敬请期待。
-                        </p>
-                        <div class="project-tags">
-                            <span>进行中</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 联系我（仅保留 GitHub） -->
-            <section class="card">
-                <div class="section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
-                    <h2>联系我</h2>
-                </div>
-                <div class="contact-info">
-                    <div class="contact-row">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.8-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.59.69.48A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/>
-                        </svg>
-                        <a href="https://github.com/pillager-outpost" target="_blank" rel="noopener noreferrer">github.com/pillager-outpost</a>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- 简单的页脚，横跨整个网格 -->
-        <div class="footer-note">
-            © 2025 刘智中 · 保持好奇，保持创造
+    <!-- ===== 初始 “AI写的” 弹窗 ===== -->
+    <div class="modal-overlay show" id="aiModal" role="dialog" aria-modal="true" aria-labelledby="aiModalTitle">
+        <div class="modal-box">
+            <span class="modal-emoji">🤖</span>
+            <h2 class="modal-title" id="aiModalTitle">系统提示</h2>
+            <p class="modal-desc">AI写的，凑合看吧</p>
+            <button class="modal-close" id="aiClose" type="button">知道了</button>
         </div>
     </div>
+
+    <!-- ===== “好眼力” 弹窗 ===== -->
+    <div class="modal-overlay" id="eagleModal" role="dialog" aria-modal="true" aria-labelledby="eagleModalTitle">
+        <div class="modal-box">
+            <span class="modal-emoji">👀</span>
+            <h2 class="modal-title" id="eagleModalTitle">好眼力！</h2>
+            <p class="modal-desc">这都被你发现了～</p>
+            <button class="modal-close" id="eagleClose" type="button">嘿嘿</button>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            function safeGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+            function safeSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+
+            /* ---------- 返回顶部 ---------- */
+            var backToTop = document.getElementById('backToTop');
+            window.addEventListener('scroll', function () {
+                backToTop.classList.toggle('show', window.scrollY > 300);
+            });
+            backToTop.addEventListener('click', function () {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            /* ---------- 主题切换 ---------- */
+            var themeToggle = document.getElementById('themeToggle');
+            var root = document.documentElement;
+            function applyTheme(t) {
+                root.setAttribute('data-theme', t);
+                themeToggle.textContent = t === 'dark' ? '☀️ 浅色模式' : '🌙 深色模式';
+            }
+            function getInitialTheme() {
+                var s = safeGet('theme');
+                if (s === 'dark' || s === 'light') return s;
+                try { return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+                catch(e){ return 'light'; }
+            }
+            applyTheme(getInitialTheme());
+            themeToggle.addEventListener('click', function () {
+                var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                applyTheme(next);
+                safeSet('theme', next);
+            });
+
+            /* ---------- 初始 AI 弹窗 ---------- */
+            var aiModal = document.getElementById('aiModal');
+            var aiClose = document.getElementById('aiClose');
+            aiClose.addEventListener('click', function () {
+                aiModal.classList.remove('show');
+            });
+            aiModal.addEventListener('click', function (e) {
+                if (e.target === aiModal) aiModal.classList.remove('show');
+            });
+
+            /* ---------- “好眼力” 弹窗 ---------- */
+            var eagleModal = document.getElementById('eagleModal');
+            var eagleClose = document.getElementById('eagleClose');
+            eagleClose.addEventListener('click', function () {
+                eagleModal.classList.remove('show');
+            });
+            eagleModal.addEventListener('click', function (e) {
+                if (e.target === eagleModal) eagleModal.classList.remove('show');
+            });
+
+            /* ---------- “作”字彩蛋 ---------- */
+            var aboutParagraphs = document.querySelectorAll('.about-text p');
+            if (aboutParagraphs.length === 0) {
+                // 页面上没有 .about-text 时，回退到全局查找第二段卡片内容
+                aboutParagraphs = document.querySelectorAll('.card p');
+            }
+            var targetChar = null;
+
+            function wrapChar() {
+                var allP = document.querySelectorAll('.card p');
+                for (var i = 0; i < allP.length; i++) {
+                    var p = allP[i];
+                    for (var j = 0; j < p.childNodes.length; j++) {
+                        var node = p.childNodes[j];
+                        if (node.nodeType === Node.TEXT_NODE && node.textContent.indexOf('作') !== -1) {
+                            var text = node.textContent;
+                            var idx = text.indexOf('作');
+                            if (idx === -1) continue;
+
+                            var beforeText = text.slice(0, idx);
+                            var afterText = text.slice(idx + 1);
+
+                            var beforeNode = document.createTextNode(beforeText);
+                            var span = document.createElement('span');
+                            span.textContent = '作';
+                            span.className = 'clickable-char';
+                            var afterNode = document.createTextNode(afterText);
+
+                            var parent = node.parentNode;
+                            parent.replaceChild(beforeNode, node);
+                            parent.insertBefore(span, beforeNode.nextSibling);
+                            parent.insertBefore(afterNode, span.nextSibling);
+
+                            targetChar = span;
+                            return;
+                        }
+                    }
+                }
+            }
+            wrapChar();
+
+            if (targetChar) {
+                var clicked = false;
+                targetChar.addEventListener('click', function () {
+                    if (clicked) return;
+                    clicked = true;
+                    targetChar.classList.add('clicked');
+                    setTimeout(function () {
+                        eagleModal.classList.add('show');
+                    }, 500);
+                });
+            }
+
+            /* ---------- ESC 关闭弹窗 ---------- */
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    if (eagleModal.classList.contains('show')) {
+                        eagleModal.classList.remove('show');
+                    } else if (aiModal.classList.contains('show')) {
+                        aiModal.classList.remove('show');
+                    }
+                }
+            });
+        })();
+    </script>
 </body>
 </html>
